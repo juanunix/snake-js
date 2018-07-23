@@ -1,12 +1,3 @@
-/*
-Construir el motor de Juego.
-Un motor de juego se contruye por:
-* Renderización de las imágenes
-* Animaciones de los elementos
-* Rutinas para detección de colisiones
-*/
-
-// Variables globales
 var velocidad = 20;
 var tamano = 10;
 
@@ -14,7 +5,6 @@ class Objeto {
 	constructor(){
 		this.tamano = tamano;
 	}
-	// Las colisiones se evalúan entre las diferencias de x & y
 	shock(obj){
 		var difx = Math.abs(this.x - obj.x);
 		var dify = Math.abs(this.y - obj.y);
@@ -25,13 +15,6 @@ class Objeto {
 		}
 	}
 }
-
-/*clase cabeza que hereda de la clase objeto tiene su constructor con un super
-llamando a su objeto padre e inicializando x y long en nullcontiene un metodo 
-dibu que obtiene como parametro el contexto verifica si la variable es difrente 
-de null y vuelve a realizar un llamado del metodo dibua traves de la recursividad 
-tambien esta el metodo set_xy donde verifica nuevamenteque el onjeto long sea difrente 
-de null si es asi el realiza el llamado del metodo dibu */
 
 class Head extends Objeto {
 	constructor(x, y){
@@ -54,14 +37,14 @@ class Head extends Objeto {
 		this.x = x;
 		this.y = y;
 	}
-	crecer(){
+	grow(){
 		if(this.long == null){
 			this.long = new Head(this.x, this.y);
 		} else {
-			this.long.crecer();
+			this.long.grow();
 		}
 	}
-	getCrecer(){
+	getgrow(){
 		return this.long;
 	}
 }
@@ -86,7 +69,6 @@ class Comida extends Objeto {
 	}
 }
 
-//Objetos del juego
 var head = new Head(20, 20);
 var comida = new Comida();
 var ejex = true;
@@ -100,8 +82,6 @@ function movimiento(){
 	head.set_xy(nx, ny);
 }
 
-/*funcion que finaliza el juego realizando un seteo de las variables
-y emitiendo un mensaje alert */
 function endplay(){
 	xdir = 0;
 	ydir = 0;
@@ -112,33 +92,29 @@ function endplay(){
 	alert('Bad! :(');
 }
 
-function choquecuerpo(){
+function shockbody(){
 	var temp = null;
 	try {
-		temp = head.getCrecer().getCrecer();
+		temp = head.getGrow().getGrow();
 	} catch (error){
 		temp = null;
 	}
 	while (temp != null){
 		if (head.shock(temp)){
-			//Fin Juego
+			
 			endplay();
 		} else {
-			temp = temp.getCrecer();
+			temp = temp.getGrow();
 		}
 	} 
 }
-/*Esto realiza la verificacion de los limites de la pantalla es decir 
-valida que la cabeza no se salga de los bordes del area marcada*/
-function choquelimit(){
+function shocklimit(){
 	if(head.x < 0 || head.x > 590 || head.y < 0 || head.y > 590){
 		endplay();
 	}
 }
 
-/*Función de los controles
-ESTA FUNCION CONTROLA LAS ENTRADAS DEL TECLADO ARRIBA ABAJO DERECHA IZQUIERDA
-*/
+
 function control(event){
 	var cod = event.keyCode;
 	if (ejex){
@@ -171,26 +147,24 @@ function control(event){
 	}
 }
 
-/*Función para renderizar los gráficos en el objeto canvas*/
 function dibu(){
 	var canvas = document.getElementById('canvas');
 	var ctx = canvas.getContext('2d');
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	// Aquí va el dibujo
 	head.dibu(ctx);
 	comida.dibu(ctx);
 }
 
-/*Función para animar funcion principal para llamar todos los objetos y metodos*/
+
 function main(){
-	choquecuerpo();
-	choquelimit();
+	shockbody();
+	shocklimit();
 	dibu();
 	movimiento();
 	if(head.shock(comida)){
 		comida.colocar();
-		head.crecer();
+		head.grow();
 	}
 }
 setInterval("main()", velocidad);
