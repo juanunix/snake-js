@@ -7,7 +7,7 @@ Un motor de juego se contruye por:
 */
 
 // Variables globales
-var velocidad = 580;
+var velocidad = 20;
 var tamano = 10;
 
 class Objeto {
@@ -15,7 +15,7 @@ class Objeto {
 		this.tamano = tamano;
 	}
 	// Las colisiones se evalúan entre las diferencias de x & y
-	choche(obj){
+	shock(obj){
 		var difx = Math.abs(this.x - obj.x);
 		var dify = Math.abs(this.y - obj.y);
 		if (difx >= 0 && difx < tamano && dify >= 0 && dify < tamano){
@@ -28,21 +28,21 @@ class Objeto {
 
 /*clase cabeza que hereda de la clase objeto tiene su constructor con un super
 llamando a su objeto padre e inicializando x y long en nullcontiene un metodo 
-dibujar que obtiene como parametro el contexto verifica si la variable es difrente 
-de null y vuelve a realizar un llamado del metodo dibujara traves de la recursividad 
+dibu que obtiene como parametro el contexto verifica si la variable es difrente 
+de null y vuelve a realizar un llamado del metodo dibua traves de la recursividad 
 tambien esta el metodo set_xy donde verifica nuevamenteque el onjeto long sea difrente 
-de null si es asi el realiza el llamado del metodo dibujar */
+de null si es asi el realiza el llamado del metodo dibu */
 
-class Cabeza extends Objeto {
+class Head extends Objeto {
 	constructor(x, y){
 		super();
 		this.x = x;
 		this.y = y;
 		this.long = null;
 	}
-	dibujar(context){
+	dibu(context){
 		if (this.long != null){
-			this.long.dibujar(context);
+			this.long.dibu(context);
 		}
 		context.fillStyle = '#0000FF';
 		context.fillRect(this.x, this.y, this.tamano, this.tamano);
@@ -56,7 +56,7 @@ class Cabeza extends Objeto {
 	}
 	crecer(){
 		if(this.long == null){
-			this.long = new Cabeza(this.x, this.y);
+			this.long = new Head(this.x, this.y);
 		} else {
 			this.long.crecer();
 		}
@@ -80,14 +80,14 @@ class Comida extends Objeto {
 		this.x = this.generar();
 		this.y = this.generar();
 	}
-	dibujar(context){
+	dibu(context){
 		context.fillStyle = '#FF0000';
 		context.fillRect(this.x, this.y, this.tamano, this.tamano);
 	}
 }
 
 //Objetos del juego
-var cabeza = new Cabeza(20, 20);
+var head = new Head(20, 20);
 var comida = new Comida();
 var ejex = true;
 var ejey = true;
@@ -95,9 +95,9 @@ var xdir = 0;
 var ydir = 0;
 
 function movimiento(){
-	var nx = cabeza.x+xdir;
-	var ny = cabeza.y+ydir;
-	cabeza.set_xy(nx, ny);
+	var nx = head.x+xdir;
+	var ny = head.y+ydir;
+	head.set_xy(nx, ny);
 }
 
 /*funcion que finaliza el juego realizando un seteo de las variables
@@ -107,20 +107,20 @@ function endplay(){
 	ydir = 0;
 	ejex = true;
 	ejey = true;
-	cabeza = new Cabeza(20, 20);
+	head = new Head(20, 20);
 	comida = new Comida();
-	alert('Perdiste! :(');
+	alert('Bad! :(');
 }
 
 function choquecuerpo(){
 	var temp = null;
 	try {
-		temp = cabeza.getCrecer().getCrecer();
+		temp = head.getCrecer().getCrecer();
 	} catch (error){
 		temp = null;
 	}
 	while (temp != null){
-		if (cabeza.choche(temp)){
+		if (head.shock(temp)){
 			//Fin Juego
 			endplay();
 		} else {
@@ -131,7 +131,7 @@ function choquecuerpo(){
 /*Esto realiza la verificacion de los limites de la pantalla es decir 
 valida que la cabeza no se salga de los bordes del area marcada*/
 function choquelimit(){
-	if(cabeza.x < 0 || cabeza.x > 590 || cabeza.y < 0 || cabeza.y > 590){
+	if(head.x < 0 || head.x > 590 || head.y < 0 || head.y > 590){
 		endplay();
 	}
 }
@@ -172,25 +172,25 @@ function control(event){
 }
 
 /*Función para renderizar los gráficos en el objeto canvas*/
-function dibujar(){
+function dibu(){
 	var canvas = document.getElementById('canvas');
 	var ctx = canvas.getContext('2d');
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	// Aquí va el dibujo
-	cabeza.dibujar(ctx);
-	comida.dibujar(ctx);
+	head.dibu(ctx);
+	comida.dibu(ctx);
 }
 
 /*Función para animar funcion principal para llamar todos los objetos y metodos*/
 function main(){
 	choquecuerpo();
 	choquelimit();
-	dibujar();
+	dibu();
 	movimiento();
-	if(cabeza.choche(comida)){
+	if(head.shock(comida)){
 		comida.colocar();
-		cabeza.crecer();
+		head.crecer();
 	}
 }
 setInterval("main()", velocidad);
